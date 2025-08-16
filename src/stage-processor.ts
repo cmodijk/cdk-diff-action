@@ -214,7 +214,7 @@ export class AssemblyProcessor {
     } catch (e: any) {
       this.handleError(
         e,
-        `Comment for stack ${stackName} is too long, please report this as a bug https://github.com/corymhall/cdk-diff-action/issues/new`,
+        `Comment for directory ${this.options.cdkOutDir} is too long, please report this as a bug https://github.com/corymhall/cdk-diff-action/issues/new`,
       );
     }
   }
@@ -328,19 +328,19 @@ export class AssemblyProcessor {
   }
 
   private formatStackComment(
-    stackName: string,
+    _stackName: string,
     diff: TemplateDiff,
     changes: ChangeDetails,
   ): string[] {
     const output: string[] = [];
     const emoji = this.getEmoji(changes);
     if (diff.isEmpty) {
-      output.push(`No Changes for stack: ${stackName} ${emoji}`);
+      output.push(`No Changes for directory: ${this.options.cdkOutDir} ${emoji}`);
       return output;
     }
     output.push(
       ...[
-        `#### Diff for stack: ${stackName} - ` +
+        `#### CDK Diff for ${this.options.cdkOutDir} - ` +
           `***${changes.createdResources} to add, ${changes.updatedResources} to update, ${changes.removedResources} to destroy***  ` +
           emoji,
         '<details><summary>Details</summary>',
@@ -352,7 +352,7 @@ export class AssemblyProcessor {
       output.push('> [!WARNING]\n> ***Destructive Changes*** :bangbang:'),
         changes.destructiveChanges.forEach((change) => {
           output.push(
-            `> **Stack: ${change.stackName} - Resource: ${change.logicalId} - Impact:** ***${change.impact}***`,
+            `> **Resource: ${change.logicalId} - Impact:** ***${change.impact}***`,
           );
           output.push('');
         });
@@ -370,12 +370,12 @@ export class AssemblyProcessor {
   }
 
   /**
-   * Only used when the stage comment is too long and we are creating
-   * a separate comment for each stack
+   * Only used when the comment is too long and we are creating
+   * a separate comment for the directory
    */
   private getCommentForStack(
-    stageName: string,
-    stackName: string,
+    _stageName: string,
+    _stackName: string,
     comment: string[],
   ): string[] {
     const output: string[] = [];
@@ -386,7 +386,7 @@ export class AssemblyProcessor {
       output.push(`## ${this.options.title}`);
       output.push('');
     }
-    output.push(`### Diff for stack: ${stageName} / ${stackName} (${this.options.cdkOutDir})`);
+    output.push(`### CDK Diff for ${this.options.cdkOutDir}`);
 
     return output.concat(comment);
   }
@@ -404,7 +404,7 @@ export class AssemblyProcessor {
       output.push(`## ${this.options.title}`);
       output.push('');
     }
-    output.push(`### Diff for stage: ${stageName} (${this.options.cdkOutDir})`);
+    output.push(`### CDK Diff for ${this.options.cdkOutDir}`);
 
     if (stageComments.destructiveChanges) {
       output.push(

@@ -126,7 +126,7 @@ describe('StageProcessor', () => {
       SomeStage: expect.any(Object),
     });
     expect(p.SomeStage.stackComments['SomeStage/test-stack']).toEqual([
-      'No Changes for stack: SomeStage/test-stack :white_check_mark:',
+      'No Changes for directory: cdk.out :white_check_mark:',
     ]);
   });
 
@@ -330,7 +330,7 @@ describe('default stage', () => {
       DefaultStage: expect.any(Object),
     });
     expect(p.DefaultStage.stackComments['test-stack']).toEqual([
-      'No Changes for stack: test-stack :white_check_mark:',
+      'No Changes for directory: cdk.out :white_check_mark:',
     ]);
   });
 });
@@ -432,7 +432,7 @@ describe('stack comments', () => {
     await processor.processStages();
     await expect(
       processor.commentStages(new Comments({} as any, {} as any)),
-    ).rejects.toThrow(/Comment for stack SomeStage\/my-stack1 is too long/);
+    ).rejects.toThrow(/Comment for directory cdk\.out is too long/);
     expect(findPreviousMock).toHaveBeenCalledTimes(11);
     expect(createCommentMock).toHaveBeenCalledTimes(0);
     expect(updateCommentMock).toHaveBeenCalledTimes(11);

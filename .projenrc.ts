@@ -45,17 +45,6 @@ const project = new GitHubActionTypeScriptProject({
         description: 'github token',
         required: true,
       },
-      allowedDestroyTypes: {
-        description:
-          'Comma delimited list of resource types that are allowed to be destroyed',
-        required: false,
-        default: '',
-      },
-      failOnDestructiveChanges: {
-        description: 'Whether or not destructive changes should fail the job',
-        required: false,
-        default: 'true',
-      },
       stackSelectorPatterns: {
         description:
           'Comma delimited list of stack selector patterns. Use this to control which stages/stacks to diff. By default all stages & stacks are diffed\n\n' +
@@ -75,12 +64,6 @@ const project = new GitHubActionTypeScriptProject({
         ].join('\n'),
         default: 'all-stacks',
         required: false,
-      },
-      noFailOnDestructiveChanges: {
-        description:
-          'List of stages where breaking changes will not fail the build',
-        required: false,
-        default: '',
       },
       cdkOutDirs: {
         description: [

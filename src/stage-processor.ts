@@ -44,7 +44,7 @@ interface StageComment {
 }
 
 export interface AssemblyProcessorOptions
-  extends Omit<Inputs, 'githubToken' | 'diffMethod' | 'cdkOutDirs'> {
+  extends Omit<Inputs, 'githubToken' | 'diffMethod'> {
   cdkOutDir: string;
   diffMethod: DiffMethod;
   toolkit: Toolkit;
@@ -181,7 +181,7 @@ export class AssemblyProcessor {
    * Process all of the stages. Once this has been run
    * the comment can be created with `commentStages()`
    */
-  public async processStages(ignoreDestructiveChanges: string[] = []) {
+  public async processStages() {
     if (!this._templateDiffs) {
       await this.diffApp();
     }
@@ -189,16 +189,13 @@ export class AssemblyProcessor {
     for (const stage of this.stageDiffInfo) {
       for (const stack of stage.stacks) {
         try {
-          const { comment, changes } = await this.diffStack(stack);
+          const { comment } = await this.diffStack(stack);
           debug(
             `Diff for stack ${stack.stackName}: ${JSON.stringify(comment, null, 2)}`,
           );
           this.stageComments[stage.name].stackComments[stack.stackName].push(
             ...comment,
           );
-          if (!ignoreDestructiveChanges.includes(stage.name)) {
-            this.stageComments[stage.name].destructiveChanges += changes;
-          }
         } catch (e: any) {
           console.error('Error processing stages: ', e);
           throw e;
@@ -317,23 +314,12 @@ export class AssemblyProcessor {
     }
   }
 
-  /**
-   * Returns whether or not there are destructive changes in this stage
-   */
-  public get hasDestructiveChanges(): boolean {
-    for (const comments of Object.values(this.stageComments)) {
-      if (comments.destructiveChanges) {
-        return true;
-      }
-    }
-    return false;
-  }
 
   private async diffStack(
     stack: StackDiffInfo,
   ): Promise<{ comment: string[]; changes: number }> {
     try {
-      const stackDiff = new StackDiff(stack, this.options.allowedDestroyTypes);
+      const stackDiff = new StackDiff(stack, []);
       const { diff, changes } = await stackDiff.diffStack();
       return {
         comment: this.formatStackComment(stack.stackName, diff, changes),

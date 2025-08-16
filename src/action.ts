@@ -1,6 +1,5 @@
 import {
   getInput,
-  getBooleanInput,
   getMultilineInput,
   debug,
 } from '@actions/core';
@@ -51,9 +50,8 @@ function hasGitChanges(directory: string, baseRef: string): boolean {
     const hasChanges = result.trim().length > 0;
     debug(`Directory ${projectDir} has changes against ${baseRef}: ${hasChanges}`);
     
-    if (hasChanges) {
-      debug(`Changed files in ${projectDir}:\n${result}`);
-    }
+    // Always show git diff output for debugging purposes
+    debug(`Git diff output for ${projectDir}:\n${result || '(no changes)'}`);
     
     return hasChanges;
   } catch (error) {
@@ -102,15 +100,11 @@ export async function run() {
     defaultStageDisplayName: getInput('defaultStageDisplayName', {
       required: true,
     }),
-    allowedDestroyTypes: getMultilineInput('allowedDestroyTypes'),
-    failOnDestructiveChanges: getBooleanInput('failOnDestructiveChanges'),
     githubToken: getInput('githubToken'),
     stackSelectorPatterns: getMultilineInput('stackSelectorPatterns'),
     stackSelectionStrategy: getInput('stackSelectionStrategy', {
       required: true,
     }),
-    noFailOnDestructiveChanges: getMultilineInput('noFailOnDestructiveChanges'),
-    cdkOutDirs: cdkOutDirs,
     baseRef: baseRef,
     diffMethod: getInput('diffMethod', { required: true }),
   };
@@ -138,9 +132,8 @@ export async function run() {
       : DiffMethod.ChangeSet();
   try {
     const comments = new Comments(octokit, context);
-    let hasAnyDestructiveChanges = false;
 
-    for (const cdkOutDir of inputs.cdkOutDirs) {
+    for (const cdkOutDir of cdkOutDirs) {
       debug(`Processing CDK output directory: ${cdkOutDir}`);
       const processor = new AssemblyProcessor({
         ...inputs,
@@ -149,7 +142,7 @@ export async function run() {
         toolkit,
       });
       try {
-        await processor.processStages(inputs.noFailOnDestructiveChanges);
+        await processor.processStages();
       } catch (e: any) {
         console.error(`Error running process stages for ${cdkOutDir}: `, e);
         throw e;
@@ -161,16 +154,6 @@ export async function run() {
         console.error(`Error commenting stages for ${cdkOutDir}: `, e);
         throw e;
       }
-
-      if (processor.hasDestructiveChanges) {
-        hasAnyDestructiveChanges = true;
-      }
-    }
-
-    if (hasAnyDestructiveChanges && inputs.failOnDestructiveChanges) {
-      throw new Error(
-        'There are destructive changes! See PR comment for details.',
-      );
     }
   } catch (e: any) {
     console.error('Error performing diff: ', e);

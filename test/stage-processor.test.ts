@@ -169,7 +169,6 @@ describe('StageProcessor', () => {
     expect(
       p.SomeStage.stackComments['SomeStage/test-stack'].length,
     ).not.toEqual(0);
-    expect(p.SomeStage.destructiveChanges).toEqual(1);
   });
 
   test('stage with destructive changes-ignored', async () => {
@@ -396,7 +395,6 @@ describe('StageProcessor', () => {
     expect(p.SomeStage.stackComments['SomeOtherStage/test-stack']).toEqual(
       undefined,
     );
-    expect(p.SomeStage.destructiveChanges).toEqual(1);
   });
 });
 

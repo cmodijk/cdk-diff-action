@@ -7,21 +7,6 @@ export interface Inputs {
    */
   githubToken: string;
 
-  /**
-   * A list of CloudFormation resource types that are allowed
-   * to be destroyed.
-   *
-   * @default - there are no allowed destroy types
-   */
-  allowedDestroyTypes: string[];
-
-  /**
-   * Whether the workflow will fail if there are any non-allowed
-   * destructive changes
-   *
-   * @default true
-   */
-  failOnDestructiveChanges: boolean;
 
   /**
    * List of stack selector patterns
@@ -55,20 +40,6 @@ export interface Inputs {
    * @default 'change-set'
    */
   diffMethod: string;
-
-  /**
-   * List of stages where breaking changes will not fail the build
-   *
-   * @default - breaking changes on any stage will fail the build
-   */
-  noFailOnDestructiveChanges: string[];
-
-  /**
-   * The locations of the CDK output directories
-   *
-   * @default ['cdk.out']
-   */
-  cdkOutDirs: string[];
 
   /**
    * Git reference to compare against for detecting changes

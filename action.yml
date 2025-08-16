@@ -43,10 +43,28 @@ inputs:
     description: List of stages where breaking changes will not fail the build
     required: false
     default: ""
-  cdkOutDir:
-    description: The location of the CDK output directory
+  cdkOutDirs:
+    description: |-
+      Glob pattern to find CDK output directories to diff.
+
+      Examples:
+      - Find all: "**/cdk.out"
+      - Specific folders: "{infra,apps,packages}/*/cdk.out"
+      - Single project: "my-project/cdk.out"
     required: false
-    default: cdk.out
+    default: "**/cdk.out"
+  baseRef:
+    description: |-
+      Git reference to compare against for detecting changes.
+
+      Only directories with changes compared to this ref will be processed.
+
+      Examples:
+      - "origin/main"
+      - "main"
+      - "HEAD~1"
+    required: false
+    default: origin/main
   diffMethod:
     description: |-
       The method to create a stack diff.

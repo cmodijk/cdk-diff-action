@@ -44,7 +44,8 @@ interface StageComment {
 }
 
 export interface AssemblyProcessorOptions
-  extends Omit<Inputs, 'githubToken' | 'diffMethod'> {
+  extends Omit<Inputs, 'githubToken' | 'diffMethod' | 'cdkOutDirs'> {
+  cdkOutDir: string;
   diffMethod: DiffMethod;
   toolkit: Toolkit;
   defaultStageDisplayName: string;
@@ -110,6 +111,7 @@ export class AssemblyProcessor {
         hash: md5Hash(
           JSON.stringify({
             stageName: stage.name,
+            cdkOutDir: this.options.cdkOutDir,
             title: this.options.title,
             ...stage.stacks.reduce(
               (prev, curr) => {
@@ -214,6 +216,7 @@ export class AssemblyProcessor {
     const hash = md5Hash(
       JSON.stringify({
         title: this.options.title,
+        cdkOutDir: this.options.cdkOutDir,
         stageName,
         stackName,
       }),
@@ -412,7 +415,7 @@ export class AssemblyProcessor {
       output.push(`## ${this.options.title}`);
       output.push('');
     }
-    output.push(`### Diff for stack: ${stageName} / ${stackName}`);
+    output.push(`### Diff for stack: ${stageName} / ${stackName} (${this.options.cdkOutDir})`);
 
     return output.concat(comment);
   }
@@ -430,7 +433,7 @@ export class AssemblyProcessor {
       output.push(`## ${this.options.title}`);
       output.push('');
     }
-    output.push(`### Diff for stage: ${stageName}`);
+    output.push(`### Diff for stage: ${stageName} (${this.options.cdkOutDir})`);
 
     if (stageComments.destructiveChanges) {
       output.push(

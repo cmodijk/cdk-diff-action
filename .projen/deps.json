@@ -142,6 +142,10 @@
       "type": "runtime"
     },
     {
+      "name": "fast-glob",
+      "type": "runtime"
+    },
+    {
       "name": "fs-extra",
       "type": "runtime"
     }

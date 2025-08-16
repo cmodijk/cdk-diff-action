@@ -64,11 +64,18 @@ export interface Inputs {
   noFailOnDestructiveChanges: string[];
 
   /**
-   * The location of the CDK output directory
+   * The locations of the CDK output directories
    *
-   * @default cdk.out
+   * @default ['cdk.out']
    */
-  cdkOutDir: string;
+  cdkOutDirs: string[];
+
+  /**
+   * Git reference to compare against for detecting changes
+   *
+   * @default 'origin/main'
+   */
+  baseRef: string;
 
   /**
    * An optional display name for the CDK default stage.

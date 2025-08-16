@@ -64,6 +64,7 @@
     "@aws-cdk/cx-api": "^2.210.0",
     "@aws-cdk/toolkit-lib": "^1.4.1",
     "@octokit/webhooks-definitions": "^3.67.3",
+    "fast-glob": "^3.3.3",
     "fs-extra": "^11.3.1"
   },
   "engines": {

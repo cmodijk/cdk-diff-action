@@ -82,10 +82,31 @@ const project = new GitHubActionTypeScriptProject({
         required: false,
         default: '',
       },
-      cdkOutDir: {
-        description: 'The location of the CDK output directory',
+      cdkOutDirs: {
+        description: [
+          'Glob pattern to find CDK output directories to diff.',
+          '',
+          'Examples:',
+          '- Find all: "**/cdk.out"',
+          '- Specific folders: "{infra,apps,packages}/*/cdk.out"',
+          '- Single project: "my-project/cdk.out"',
+        ].join('\n'),
         required: false,
-        default: 'cdk.out',
+        default: '**/cdk.out',
+      },
+      baseRef: {
+        description: [
+          'Git reference to compare against for detecting changes.',
+          '',
+          'Only directories with changes compared to this ref will be processed.',
+          '',
+          'Examples:',
+          '- "origin/main"',
+          '- "main"',
+          '- "HEAD~1"',
+        ].join('\n'),
+        required: false,
+        default: 'origin/main',
       },
       diffMethod: {
         description: [
@@ -135,6 +156,7 @@ const project = new GitHubActionTypeScriptProject({
     '@octokit/webhooks-definitions',
     '@aws-cdk/cloud-assembly-schema',
     'fs-extra',
+    'fast-glob',
   ],
   devDeps: [
     'mock-fs@^5',

@@ -1,6 +1,5 @@
 import {
   getInput,
-  getMultilineInput,
   debug,
 } from '@actions/core';
 import * as github from '@actions/github';
@@ -98,20 +97,9 @@ export async function run() {
   const inputs: Inputs = {
     title: getInput('title') || undefined,
     githubToken: getInput('githubToken'),
-    stackSelectorPatterns: getMultilineInput('stackSelectorPatterns'),
-    stackSelectionStrategy: getInput('stackSelectionStrategy', {
-      required: true,
-    }),
     baseRef: baseRef,
     diffMethod: getInput('diffMethod', { required: true }),
   };
-
-  if (
-    inputs.stackSelectorPatterns.length > 0 &&
-    inputs.stackSelectionStrategy === 'all-stacks'
-  ) {
-    inputs.stackSelectionStrategy = 'pattern-must-match';
-  }
 
   debug(`Inputs: ${JSON.stringify(inputs, null, 2)}`);
 

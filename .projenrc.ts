@@ -45,26 +45,6 @@ const project = new GitHubActionTypeScriptProject({
         description: 'github token',
         required: true,
       },
-      stackSelectorPatterns: {
-        description:
-          'Comma delimited list of stack selector patterns. Use this to control which stages/stacks to diff. By default all stages & stacks are diffed\n\n' +
-          '@see https://github.com/aws/aws-cdk-cli/tree/main/packages/%40aws-cdk/toolkit-lib#stack-selection',
-        required: false,
-        default: '',
-      },
-      stackSelectionStrategy: {
-        description: [
-          'Used in combination with "stackSelectorPatterns" to control which stacks to diff.',
-          '',
-          'Valid values are "all-stacks", "main-assembly", "only-single", "pattern-match",',
-          '"pattern-must-match", "pattern-must-match-single"',
-          '',
-          '@default pattern-must-match if "stackSelectorPatterns" is provided, otherwise "all-stacks"',
-          '@see https://github.com/aws/aws-cdk-cli/tree/main/packages/%40aws-cdk/toolkit-lib#stack-selection',
-        ].join('\n'),
-        default: 'all-stacks',
-        required: false,
-      },
       cdkOutDirs: {
         description: [
           'Glob pattern to find CDK output directories to diff.',

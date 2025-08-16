@@ -118,8 +118,6 @@ describe('StageProcessor', () => {
         'cdk.out/SomeStage-test-stack.template.json',
       ),
       failOnDestructiveChanges: true,
-      stackSelectorPatterns: [],
-      stackSelectionStrategy: 'all-stacks',
       noFailOnDestructiveChanges: [],
     });
     await processor.processStages();
@@ -155,8 +153,6 @@ describe('StageProcessor', () => {
         'cdk.out/SomeStage-test-stack.template.json',
       ),
       failOnDestructiveChanges: true,
-      stackSelectorPatterns: [],
-      stackSelectionStrategy: 'all-stacks',
       noFailOnDestructiveChanges: [],
     });
     await processor.processStages();
@@ -192,11 +188,9 @@ describe('StageProcessor', () => {
         'cdk.out/SomeStage-test-stack.template.json',
       ),
       failOnDestructiveChanges: true,
-      stackSelectorPatterns: [],
-      stackSelectionStrategy: 'all-stacks',
       noFailOnDestructiveChanges: [],
     });
-    await processor.processStages(['SomeStage']);
+    await processor.processStages();
     const p = (processor as any).stageComments;
     expect(p).toEqual({
       SomeStage: expect.any(Object),
@@ -230,11 +224,9 @@ describe('StageProcessor', () => {
         'cdk.out/SomeStage-test-stack.template.json',
       ),
       failOnDestructiveChanges: true,
-      stackSelectorPatterns: [],
-      stackSelectionStrategy: 'all-stacks',
       noFailOnDestructiveChanges: [],
     });
-    await processor.processStages(['SomeStage']);
+    await processor.processStages();
     await processor.commentStages(new Comments({} as any, {} as any));
     expect(createCommentMock).toHaveBeenCalledTimes(1);
     expect(findPreviousMock).toHaveBeenCalledTimes(1);
@@ -264,131 +256,14 @@ describe('StageProcessor', () => {
         'cdk.out/SomeStage-test-stack.template.json',
       ),
       failOnDestructiveChanges: true,
-      stackSelectorPatterns: [],
-      stackSelectionStrategy: 'all-stacks',
       noFailOnDestructiveChanges: [],
     });
     findPreviousMock.mockResolvedValue(1);
-    await processor.processStages(['SomeStage']);
+    await processor.processStages();
     await processor.commentStages(new Comments({} as any, {} as any));
     expect(findPreviousMock).toHaveBeenCalledTimes(1);
     expect(createCommentMock).toHaveBeenCalledTimes(0);
     expect(updateCommentMock).toHaveBeenCalledTimes(1);
-  });
-
-  test('filter stages', async () => {
-    mockOutDir = {
-      'SomeStage-test-stack.template.json': JSON.stringify({
-        Resources: {
-          MyRole: {
-            Type: 'AWS::IAM::Role',
-            Properties: {
-              RoleName: 'MyCustomName2',
-            },
-          },
-        },
-      }),
-      'manifest.json': JSON.stringify({
-        version: '36.0.0',
-        artifacts: {
-          'assembly-SomeOtherStage': {
-            type: 'cdk:cloud-assembly',
-            properties: {
-              directoryName: 'assembly-SomeOtherStage',
-              displayName: 'SomeOtherStage',
-            },
-          },
-          'assembly-SomeStage': {
-            type: 'cdk:cloud-assembly',
-            properties: {
-              directoryName: 'assembly-SomeStage',
-              displayName: 'SomeStage',
-            },
-          },
-        },
-      }),
-      ['assembly-SomeOtherStage']: {
-        ['manifest.json']: JSON.stringify({
-          version: '36.0.0',
-          artifacts: {
-            'SomeOtherStage-test-stack': {
-              type: 'aws:cloudformation:stack',
-              environment: 'aws://unknown-account/unknown-region',
-              properties: {
-                templateFile: 'SomeOtherStage-test-stack.template.json',
-                validateOnSynth: false,
-                stackName: 'SomeOtherStage-test-stack',
-              },
-              displayName: 'SomeOtherStage/test-stack',
-            },
-          },
-        }),
-        ['SomeOtherStage-test-stack.template.json']: JSON.stringify({
-          Resources: {
-            MyRole: {
-              Type: 'AWS::IAM::Role',
-              Properties: {
-                RoleName: 'MyCustomName',
-              },
-            },
-          },
-        }),
-      },
-      ['assembly-SomeStage']: {
-        ['manifest.json']: JSON.stringify({
-          version: '36.0.0',
-          artifacts: {
-            'SomeStage-test-stack': {
-              type: 'aws:cloudformation:stack',
-              environment: 'aws://unknown-account/unknown-region',
-              properties: {
-                templateFile: 'SomeStage-test-stack.template.json',
-                validateOnSynth: false,
-                stackName: 'SomeStage-test-stack',
-              },
-              displayName: 'SomeStage/test-stack',
-            },
-          },
-        }),
-        ['SomeStage-test-stack.template.json']: JSON.stringify({
-          Resources: {
-            MyRole: {
-              Type: 'AWS::IAM::Role',
-              Properties: {
-                RoleName: 'MyCustomName',
-              },
-            },
-          },
-        }),
-      },
-    };
-    mock({
-      'cdk.out': mockOutDir,
-      node_modules: mock.load(path.join(__dirname, '..', 'node_modules')),
-    });
-    const processor = new AssemblyProcessor({
-      toolkit,
-      allowedDestroyTypes: [],
-      cdkOutDir: 'cdk.out',
-      diffMethod: DiffMethod.LocalFile(
-        'cdk.out/SomeStage-test-stack.template.json',
-      ),
-      failOnDestructiveChanges: true,
-      stackSelectorPatterns: ['!SomeOtherStage/*'],
-      stackSelectionStrategy: 'pattern-must-match',
-      noFailOnDestructiveChanges: [],
-    });
-    await processor.processStages();
-    const p = (processor as any).stageComments;
-    expect(p).toEqual({
-      SomeStage: expect.any(Object),
-    });
-    expect(
-      p.SomeStage.stackComments['SomeStage/test-stack'].length,
-    ).not.toEqual(0);
-    expect(p.SomeStage.stackComments['SomeOtherStage/test-stack']).toEqual(
-      undefined,
-    );
   });
 });
 
@@ -447,8 +322,6 @@ describe('default stage', () => {
         'cdk.out/SomeStage-test-stack.template.json',
       ),
       failOnDestructiveChanges: true,
-      stackSelectorPatterns: [],
-      stackSelectionStrategy: 'all-stacks',
       noFailOnDestructiveChanges: [],
     });
     await processor.processStages();
@@ -504,8 +377,6 @@ function setupCommentTest(): AssemblyProcessor {
     cdkOutDir: 'cdk.out',
     diffMethod: DiffMethod.TemplateOnly(),
     failOnDestructiveChanges: true,
-    stackSelectorPatterns: [],
-    stackSelectionStrategy: 'all-stacks',
     noFailOnDestructiveChanges: [],
   });
 }
@@ -514,7 +385,7 @@ describe('stack comments', () => {
     findPreviousMock.mockResolvedValue(1);
     updateCommentMock.mockRejectedValueOnce(requestError(422));
     const processor = setupCommentTest();
-    await processor.processStages(['SomeStage']);
+    await processor.processStages();
     await processor.commentStages(new Comments({} as any, {} as any));
     expect(findPreviousMock).toHaveBeenCalledTimes(11);
     expect(createCommentMock).toHaveBeenCalledTimes(0);
@@ -527,7 +398,7 @@ describe('stack comments', () => {
       requestError(400, 'Some other error failed'),
     );
     const processor = setupCommentTest();
-    await processor.processStages(['SomeStage']);
+    await processor.processStages();
     await expect(
       processor.commentStages(new Comments({} as any, {} as any)),
     ).rejects.toThrow(/Validation Error/);
@@ -543,7 +414,7 @@ describe('stack comments', () => {
       requestError(400, 'Some other error failed'),
     );
     const processor = setupCommentTest();
-    await processor.processStages(['SomeStage']);
+    await processor.processStages();
     await expect(
       processor.commentStages(new Comments({} as any, {} as any)),
     ).rejects.toThrow(/Validation Error/);
@@ -558,7 +429,7 @@ describe('stack comments', () => {
     updateCommentMock.mockRejectedValueOnce(requestError(422));
     updateCommentMock.mockRejectedValueOnce(requestError(422));
     const processor = setupCommentTest();
-    await processor.processStages(['SomeStage']);
+    await processor.processStages();
     await expect(
       processor.commentStages(new Comments({} as any, {} as any)),
     ).rejects.toThrow(/Comment for stack SomeStage\/my-stack1 is too long/);

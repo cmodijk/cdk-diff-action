@@ -6,8 +6,6 @@ import { TemplateDiff, formatDifferences } from '@aws-cdk/cloudformation-diff';
 import { CloudAssembly } from '@aws-cdk/cx-api';
 import {
   DiffMethod,
-  StackSelectionStrategy,
-  StackSelector,
   Toolkit,
 } from '@aws-cdk/toolkit-lib';
 import type { RequestError, OctokitResponse } from '@octokit/types';
@@ -154,19 +152,7 @@ export class AssemblyProcessor {
       },
     );
 
-    const selector: StackSelector =
-      this.options.stackSelectorPatterns.length > 0
-        ? {
-            strategy: this.options
-              .stackSelectionStrategy as StackSelectionStrategy,
-            patterns: this.options.stackSelectorPatterns,
-          }
-        : {
-            strategy: this.options
-              .stackSelectionStrategy as StackSelectionStrategy,
-          };
     const diffResult = await this.options.toolkit.diff(assemblySource, {
-      stacks: selector,
       method: this.options.diffMethod,
     });
 

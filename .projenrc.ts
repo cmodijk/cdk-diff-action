@@ -106,11 +106,6 @@ const project = new GitHubActionTypeScriptProject({
         required: false,
         default: 'change-set',
       },
-      defaultStageDisplayName: {
-        description: 'An optional display name for the CDK default stage.',
-        required: false,
-        default: 'DefaultStage',
-      },
       title: {
         description: 'An optional title for each diff comment on the PR.',
         required: false,

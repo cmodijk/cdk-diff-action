@@ -7,7 +7,6 @@ export interface Inputs {
    */
   githubToken: string;
 
-
   /**
    * List of stack selector patterns
    *
@@ -47,13 +46,6 @@ export interface Inputs {
    * @default 'origin/main'
    */
   baseRef: string;
-
-  /**
-   * An optional display name for the CDK default stage.
-   *
-   * @default DefaultStage
-   */
-  defaultStageDisplayName: string;
 
   /**
    * An optional title for each diff comment on the PR.

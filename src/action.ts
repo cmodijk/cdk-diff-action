@@ -97,9 +97,6 @@ export async function run() {
 
   const inputs: Inputs = {
     title: getInput('title') || undefined,
-    defaultStageDisplayName: getInput('defaultStageDisplayName', {
-      required: true,
-    }),
     githubToken: getInput('githubToken'),
     stackSelectorPatterns: getMultilineInput('stackSelectorPatterns'),
     stackSelectionStrategy: getInput('stackSelectionStrategy', {

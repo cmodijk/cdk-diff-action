@@ -48,7 +48,6 @@ export interface AssemblyProcessorOptions
   cdkOutDir: string;
   diffMethod: DiffMethod;
   toolkit: Toolkit;
-  defaultStageDisplayName: string;
 }
 
 /**
@@ -80,7 +79,7 @@ export class AssemblyProcessor {
     this._stageInfo = assembly.stages;
     if (assembly.stacks.length) {
       this.stageInfo.push({
-        name: this.options.defaultStageDisplayName,
+        name: 'DefaultStage',
         stacks: assembly.stacks,
       });
     }
